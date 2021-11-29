@@ -113,11 +113,11 @@ def build_thread(minimum_word_count):
         # determine which user posted
         if post == 0: user, last_user = 0, 0
         while user == last_user: # prevent double posting
-            if post > 0 and np.random.rand() > .8:
+            if post > 0 and np.random.rand() > .8: # OP providing update
                 user = original_poster
-            else:
+            else: # other user (weighted selection so some are more active)
                 user = min(random.randint(0,49), random.randint(0,49))
-        last_user = user
+        last_user = user # for use in while statement above on next loop
         username = list(users.keys())[user]
         post_count = users[username]
 
@@ -166,8 +166,7 @@ def build_thread(minimum_word_count):
                     para += ' ' + random.choice(['😀','🤣','🙂','🧐','🤔',
                                                  '😲','😉','🙄','😕','😆',
                                                  '👀','🤖','🦕','🌿','🍄'])
-                para += ' ' if s+1 < num_sentences else ''
-            para += '</p>'
+                para += ' ' if s+1 < num_sentences else '</p>'
 
             # select certain paragraphs to be quoted later
             if np.random.rand() > .5:
@@ -176,11 +175,12 @@ def build_thread(minimum_word_count):
                              ' said:</b></p>' + para
 
             # if OP, sometimes post yet-unseen images
-            post_image = False
             if (post == 0 and p > 2) or np.random.rand() > .7:
                 post_image = True
-            if user == original_poster \
-                and post_image == True \
+            else:
+                post_image = False
+            
+            if user == original_poster and post_image == True \
                 and len(posted_images) < 100: # avoid hanging if supply exhausted
                 unique = False
                 while not unique: # each image only appears once
